@@ -66,6 +66,7 @@ public slots:
     void ctl_playMajor7Chord();
     void ctl_playMinor7Chord();
 
+    virtual void ctl_changeBank(FmBank &bank);
     virtual void ctl_changePatch(FmBank::Instrument &instrument, bool isDrum = false) = 0;
     virtual void ctl_changeDeepVibrato(bool enabled) = 0;
     virtual void ctl_changeDeepTremolo(bool enabled) = 0;
@@ -128,6 +129,7 @@ public:
     void ctl_pitchBend(int bend) override;
     void ctl_hold(bool held) override;
     void ctl_playChord(int chord) override;
+    void ctl_changeBank(FmBank &bank);
     void ctl_changePatch(FmBank::Instrument &instrument, bool isDrum = false) override;
     void ctl_changeDeepVibrato(bool enabled) override;
     void ctl_changeDeepTremolo(bool enabled) override;
@@ -150,6 +152,7 @@ private:
     std::unique_ptr<Ring_Buffer> m_rb_ctl;
     std::unique_ptr<Ring_Buffer> m_rb_midi;
     std::unique_ptr<uint8_t[]> m_body;
+    std::shared_ptr<FmBank> m_bank;
 
     struct MidiChannelInfo
     {

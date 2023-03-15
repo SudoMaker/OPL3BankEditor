@@ -199,6 +199,10 @@ void IRealtimeControl::ctl_playMajor7Chord()
 void IRealtimeControl::ctl_playMinor7Chord()
     { ctl_playChord((int)ChordType::Minor7); }
 
+void RealtimeGenerator::ctl_changeBank(FmBank &bank) {
+    m_bank = *bank;
+}
+
 void RealtimeGenerator::ctl_changePatch(FmBank::Instrument &instrument, bool isDrum)
 {
     Ring_Buffer &rb = *m_rb_ctl;
@@ -376,9 +380,17 @@ void RealtimeGenerator::rt_message_process(int tag, const uint8_t *data, unsigne
 void RealtimeGenerator::rt_midi_process(const uint8_t *data, unsigned len)
 {
     Generator &gen = *m_gen;
+    FmBank &bank = *m_bank;
 
-    if(len == 3)
-    {
+    if (len < 2) return;
+
+    if (len == 2 && (data[0] & 0b11000000)) {
+        // unsigned chan = data[0] & 0x0f;
+        unsigned program = data[1] & 0b01111111;
+
+        gen.changePatch(bank.Ins_Melodic[program], false);
+
+    } else if(len == 3) {
         unsigned msg = data[0] >> 4;
         unsigned chan = data[0] & 0x0f;
         unsigned note = data[1] & 0x7f;
