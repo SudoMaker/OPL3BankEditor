@@ -228,7 +228,7 @@ FfmtErrCode AdLibBnk_impl::loadBankFile(QString filePath, FmBank &bank, BankForm
         strncpy(ins.name, dataS + name_address + 3, 8);
         try
         {
-            ins.adlib_drum_number       = dataU[ins_address + 1];
+            ins.rhythm_drum_type        = dataU[ins_address + 1];
 
             ins.OP[MODULATOR1].ksl      = dataU[ins_address + 2] & 0x03;
 
@@ -414,7 +414,7 @@ FfmtErrCode AdLibBnk_impl::saveBankFile(QString filePath, FmBank &bank, BnkType 
         inst.index = ins;
         /*YES, IT'S "USED"! (I see no reasons to keep junk data in the file)*/ /*(char)isDrum*/
         //NOTE: in HMI it's a "Percussive note number"
-        inst.flags = isHMI ? (hmiIsDrum ? Ins.percNoteNum : 0) : 0x01;
+        inst.flags = isHMI ? (hmiIsDrum ? clip_u8(Ins.percNoteNum + Ins.note_offset1, 1, 127) : 0) : 0x01;
 
         QString key_s = QString::fromLatin1(inst.name).toLower();
         QString key = key_s;
@@ -497,7 +497,7 @@ FfmtErrCode AdLibBnk_impl::saveBankFile(QString filePath, FmBank &bank, BnkType 
             buff = uint8_t(isDrum);
             file.write(char_p(&buff), 1);
             //    uint8_t   voicenum;
-            file.write(char_p(&Ins.adlib_drum_number), 1);
+            file.write(char_p(&Ins.rhythm_drum_type), 1);
         }
         //BNK_OPLRegs oplModulator;
         //struct BNK_OPLRegs
