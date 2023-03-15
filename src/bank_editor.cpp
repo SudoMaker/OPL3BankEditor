@@ -1321,7 +1321,8 @@ void BankEditor::reloadBanks()
     ui->bank_no->clear();
     int countOfBanks = 1;
     bool isDrum = isDrumsMode();
-    m_generator->ctl_changeBank(m_bank);
+    if (m_generator)
+    	m_generator->ctl_changeBank(m_bank);
     if(isDrum)
         countOfBanks = ((m_bank.countDrums() - 1) / 128) + 1;
     else
